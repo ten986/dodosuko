@@ -65,8 +65,13 @@ type Particle = {
   element: HTMLSpanElement
   x: number
   y: number
+  r: number
   dx: number
   dy: number
+  dr: number
+  del?: boolean
+  count: number
+  unit: number
 }
 
 const createParticle = (text: string): Particle | undefined => {
@@ -74,34 +79,64 @@ const createParticle = (text: string): Particle | undefined => {
   if (!root) {
     return
   }
-  const element = document.createElement('span')
-  element.textContent = text
-  element.style.width = `100%`
-  element.style.height = `100%`
-  element.style.fontSize = `22vmin`
-  element.style.position = `absolute`
-  element.style.transform = `translate(${100}px, ${100}px)`
-  root.appendChild(element)
-  return {
-    element,
-    x: 100,
-    y: 100,
-    dx: 1,
-    dy: 1,
+  const val = document.getElementById('val')
+  if (!val) {
+    return
   }
+  const rect = val.getBoundingClientRect()
+  const unit = Math.min(root.clientHeight, root.clientWidth) / 700
+
+  const element = document.createElement('span')
+  const p: Particle = {
+    element,
+    x: (rect.left + rect.right) / 2,
+    y: (rect.top + rect.bottom) / 2,
+    r: 0,
+    dx: (Math.random() * 30 - 15) * unit,
+    dy: (Math.random() * 10 - 15) * unit,
+    dr: Math.random() * 6 - 3,
+    unit,
+    count: 0,
+  }
+
+  element.textContent = text
+  // element.style.width = `100%`
+  // element.style.height = `100%`
+  element.style.fontSize = `22vmin`
+  element.style.fontWeight = `bold`
+  element.style.position = `absolute`
+  element.style.transform = `translate(-50%, -50%) translate(${p.x}px, ${p.y}px) rotate(${p.r}deg)`
+  element.style.opacity = '0.5'
+  root.appendChild(element)
+  return p
 }
 
 const update = (elm: Particle): Particle => {
   const e = elm.element
-  const n: Particle = {
+  const p: Particle = {
     element: e,
     x: elm.x + elm.dx,
     y: elm.y + elm.dy,
+    r: elm.r + elm.dr,
     dx: elm.dx,
-    dy: elm.dy,
+    dy: elm.dy + 0.2 * elm.unit,
+    dr: elm.dr,
+    unit: elm.unit,
+    count: elm.count + 1,
   }
-  e.style.transform = `translate(${n.x}px, ${n.y}px)`
-  return n
+  e.style.transform = `translate(-50%, -50%) translate(${p.x}px, ${p.y}px) rotate(${p.r}deg)`
+  e.style.opacity = `${((100 - p.count) / 100) * 0.5}`
+  if (p.count >= 100) {
+    p.del = true
+    const root = document.getElementById('particle')
+    if (!root) {
+      return p
+    }
+    if (p.element.parentNode === root) {
+      root.removeChild(p.element)
+    }
+  }
+  return p
 }
 
 const Root = styled.div`
@@ -111,6 +146,7 @@ const Root = styled.div`
   width: 100%;
   height: 100%;
   z-index: 1;
+  overflow: hidden;
 `
 
 function App(): JSX.Element {
@@ -127,7 +163,7 @@ function App(): JSX.Element {
   const loop = useCallback(() => {
     reqIdRef.current = requestAnimationFrame(loop)
     // // const newArray = elmArray.map((elm) => update(elm))
-    setElmArray((a) => a.map((elm) => update(elm)))
+    setElmArray((a) => a.map((elm) => update(elm)).filter((elm) => !elm.del))
   }, [])
 
   useEffect(() => {
@@ -138,6 +174,10 @@ function App(): JSX.Element {
   useEffect(() => {
     const interval = setInterval(() => {
       if (end === 0) {
+        const elm = createParticle(value)
+        if (elm) {
+          setElmArray((a) => [...a, elm])
+        }
         setFlag(!flag)
         setCounter(counter + 1)
         if (hoge === dodosuko) {
@@ -145,11 +185,6 @@ function App(): JSX.Element {
           setValue('ラブ')
           setEnd(1)
         } else {
-          const elm = createParticle(value)
-          if (elm) {
-            setElmArray((a) => [...a, elm])
-          }
-
           const str = ary[Math.floor(Math.random() * 2)]
           setValue(str)
 
@@ -165,6 +200,10 @@ function App(): JSX.Element {
           }
         }
       } else if (end === 1) {
+        const elm = createParticle(value)
+        if (elm) {
+          setElmArray((a) => [...a, elm])
+        }
         setFlag(!flag)
         setCounter(counter + 1)
         setHoge(`${hoge}注入♡`)
@@ -190,7 +229,9 @@ function App(): JSX.Element {
         </a>
       </Tweet>
       <Main>
-        <Value className={flag ? 'animation' : 'animation-b'}>{value}</Value>
+        <Value id="val" className={flag ? 'animation' : 'animation-b'}>
+          {value}
+        </Value>
       </Main>
       <Back>
         <NoMark>{all}</NoMark>
