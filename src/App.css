@@ -1,0 +1,30 @@
+.animation {
+  animation: colorchange 0.5s ease-in-out;
+}
+.animation-b {
+  animation: colorchange-b 0.5s ease-in-out;
+}
+
+@keyframes colorchange {
+  0% {
+    font-size: 25vmin;
+  }
+  10% {
+    font-size: 30vmin;
+  }
+  100% {
+    font-size: 22vmin;
+  }
+}
+
+@keyframes colorchange-b {
+  0% {
+    font-size: 25vmin;
+  }
+  10% {
+    font-size: 30vmin;
+  }
+  100% {
+    font-size: 22vmin;
+  }
+}

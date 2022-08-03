@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
+import './App.css'
 
-const delay = 10
+// ドドスコスコスコのBPMは大体143っぽい
+const delay = 420
 const ary = ['ドド', 'スコ']
 const dodosuko = 'ドドスコスコスコドドスコスコスコドドスコスコスコ'
 
@@ -38,7 +40,7 @@ const Main = styled.div`
 `
 
 const Value = styled.div`
-  font-size: 25vmin;
+  font-size: 22vmin;
   font-weight: bold;
 `
 
@@ -47,10 +49,12 @@ function App(): JSX.Element {
   const [all, setAll] = useState<string>('')
   const [hoge, setHoge] = useState<string>('')
   const [end, setEnd] = useState<number>(0)
+  const [flag, setFlag] = useState<boolean>(true)
+
   useEffect(() => {
     const interval = setInterval(() => {
       if (end === 0) {
-        // あとでドドスコしてたら終了する処理書く
+        setFlag(!flag)
         if (hoge === dodosuko) {
           setHoge(`${hoge}ラブ`)
           setValue('ラブ')
@@ -71,18 +75,19 @@ function App(): JSX.Element {
           }
         }
       } else if (end === 1) {
+        setFlag(!flag)
         setHoge(`${hoge}注入♡`)
         setValue('注入♡')
         setEnd(2)
       }
     }, delay)
     return () => clearInterval(interval)
-  }, [all, end, hoge])
+  }, [all, end, flag, hoge])
 
   return (
     <>
       <Main>
-        <Value>{value}</Value>
+        <Value className={flag ? 'animation' : 'animation-b'}>{value}</Value>
       </Main>
       <Back>
         <NoMark>{all}</NoMark>
