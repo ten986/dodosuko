@@ -36,7 +36,17 @@ const Main = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   z-index: 1;
+`
+
+const Tweet = styled.div`
+  position: absolute;
+  bottom: 20%;
+  left: 50%;
+  transform: translateY(-50%) translateX(-50%);
+  -webkit-transform: translateY(-50%) translateX(-50%);
+  z-index: 2;
 `
 
 const Value = styled.div`
@@ -44,17 +54,26 @@ const Value = styled.div`
   font-weight: bold;
 `
 
+const getUrl = (text: string) => {
+  const url = new URL('https://twitter.com/intent/tweet')
+  url.searchParams.set('text', text)
+  url.searchParams.set('url', 'https://ten986.github.io/dodosuko/')
+  return url.toString()
+}
+
 function App(): JSX.Element {
   const [value, setValue] = useState<string>('')
   const [all, setAll] = useState<string>('')
   const [hoge, setHoge] = useState<string>('')
   const [end, setEnd] = useState<number>(0)
   const [flag, setFlag] = useState<boolean>(true)
+  const [counter, setCounter] = useState<number>(0)
 
   useEffect(() => {
     const interval = setInterval(() => {
       if (end === 0) {
         setFlag(!flag)
+        setCounter(counter + 1)
         if (hoge === dodosuko) {
           setHoge(`${hoge}ラブ`)
           setValue('ラブ')
@@ -76,16 +95,28 @@ function App(): JSX.Element {
         }
       } else if (end === 1) {
         setFlag(!flag)
+        setCounter(counter + 1)
         setHoge(`${hoge}注入♡`)
         setValue('注入♡')
         setEnd(2)
       }
     }, delay)
     return () => clearInterval(interval)
-  }, [all, end, flag, hoge])
+  }, [all, counter, end, flag, hoge])
 
   return (
     <>
+      <Tweet>
+        <a
+          href={getUrl(
+            `${counter}ドドスコタイムを経て、${end === 2 ? 'ドドスコスコスコに成功した！' : '未だドドスコ中...。'}`
+          )}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Tweet
+        </a>
+      </Tweet>
       <Main>
         <Value className={flag ? 'animation' : 'animation-b'}>{value}</Value>
       </Main>
