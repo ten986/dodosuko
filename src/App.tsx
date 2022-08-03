@@ -61,6 +61,58 @@ const getUrl = (text: string) => {
   return url.toString()
 }
 
+type Particle = {
+  element: HTMLSpanElement
+  x: number
+  y: number
+  dx: number
+  dy: number
+}
+
+const createParticle = (text: string): Particle | undefined => {
+  const root = document.getElementById('particle')
+  if (!root) {
+    return
+  }
+  const element = document.createElement('span')
+  element.textContent = text
+  element.style.width = `100%`
+  element.style.height = `100%`
+  element.style.fontSize = `22vmin`
+  element.style.position = `absolute`
+  element.style.transform = `translate(${100}px, ${100}px)`
+  root.appendChild(element)
+  return {
+    element,
+    x: 100,
+    y: 100,
+    dx: 1,
+    dy: 1,
+  }
+}
+
+const update = (elm: Particle): Particle => {
+  const e = elm.element
+  const n: Particle = {
+    element: e,
+    x: elm.x + elm.dx,
+    y: elm.y + elm.dy,
+    dx: elm.dx,
+    dy: elm.dy,
+  }
+  e.style.transform = `translate(${n.x}px, ${n.y}px)`
+  return n
+}
+
+const Root = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+`
+
 function App(): JSX.Element {
   const [value, setValue] = useState<string>('')
   const [all, setAll] = useState<string>('')
@@ -69,6 +121,19 @@ function App(): JSX.Element {
   const [flag, setFlag] = useState<boolean>(true)
   const [counter, setCounter] = useState<number>(0)
   const [elmArray, setElmArray] = useState<Particle[]>([])
+
+  const reqIdRef = useRef<number>(-1)
+
+  const loop = useCallback(() => {
+    reqIdRef.current = requestAnimationFrame(loop)
+    // // const newArray = elmArray.map((elm) => update(elm))
+    setElmArray((a) => a.map((elm) => update(elm)))
+  }, [])
+
+  useEffect(() => {
+    reqIdRef.current = requestAnimationFrame(loop)
+    return () => cancelAnimationFrame(reqIdRef.current)
+  }, [loop])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -82,7 +147,7 @@ function App(): JSX.Element {
         } else {
           const elm = createParticle(value)
           if (elm) {
-            setElmArray([...elmArray, elm])
+            setElmArray((a) => [...a, elm])
           }
 
           const str = ary[Math.floor(Math.random() * 2)]
@@ -108,7 +173,8 @@ function App(): JSX.Element {
       }
     }, delay)
     return () => clearInterval(interval)
-  }, [all, counter, elmArray, end, flag, hoge, value])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [all, counter, end, flag, hoge, value])
 
   return (
     <>
@@ -130,6 +196,7 @@ function App(): JSX.Element {
         <NoMark>{all}</NoMark>
         <Mark>{hoge}</Mark>
       </Back>
+      <Root id="particle" />
     </>
   )
 }
