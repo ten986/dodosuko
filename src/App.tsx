@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import './App.css'
 
@@ -37,7 +37,7 @@ const Main = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  z-index: 1;
+  z-index: 2;
 `
 
 const Tweet = styled.div`
@@ -46,7 +46,7 @@ const Tweet = styled.div`
   left: 50%;
   transform: translateY(-50%) translateX(-50%);
   -webkit-transform: translateY(-50%) translateX(-50%);
-  z-index: 2;
+  z-index: 3;
 `
 
 const Value = styled.div`
@@ -68,6 +68,7 @@ function App(): JSX.Element {
   const [end, setEnd] = useState<number>(0)
   const [flag, setFlag] = useState<boolean>(true)
   const [counter, setCounter] = useState<number>(0)
+  const [elmArray, setElmArray] = useState<Particle[]>([])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -79,6 +80,11 @@ function App(): JSX.Element {
           setValue('ラブ')
           setEnd(1)
         } else {
+          const elm = createParticle(value)
+          if (elm) {
+            setElmArray([...elmArray, elm])
+          }
+
           const str = ary[Math.floor(Math.random() * 2)]
           setValue(str)
 
@@ -102,7 +108,7 @@ function App(): JSX.Element {
       }
     }, delay)
     return () => clearInterval(interval)
-  }, [all, counter, end, flag, hoge])
+  }, [all, counter, elmArray, end, flag, hoge, value])
 
   return (
     <>
