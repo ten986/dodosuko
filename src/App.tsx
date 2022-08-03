@@ -7,7 +7,17 @@ const ary = ['ドド', 'スコ']
 const dodosuko = 'ドドスコスコスコドドスコスコスコドドスコスコスコ'
 
 const Mark = styled.div`
+  display: inline;
   color: red;
+`
+
+const Back = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: inline;
 `
 
 function App(): JSX.Element {
@@ -16,6 +26,8 @@ function App(): JSX.Element {
   const [hoge, setHoge] = useState<string>('')
   useEffect(() => {
     const interval = setInterval(() => {
+      // あとでドドスコしてたら終了する処理書く
+
       const str = ary[Math.floor(Math.random() * 2)]
       setValue(str)
 
@@ -27,19 +39,22 @@ function App(): JSX.Element {
         setHoge(str)
       } else {
         setAll(all + hoge + str)
+        setHoge('')
       }
     }, delay)
     return () => clearInterval(interval)
   }, [all, hoge])
 
   return (
-    <div className="App">
-      <div>{value}</div>
-      <div>
+    <>
+      <div className="App">
+        <div>{value}</div>
+      </div>
+      <Back>
         {all}
         <Mark>{hoge}</Mark>
-      </div>
-    </div>
+      </Back>
+    </>
   )
 }
 
