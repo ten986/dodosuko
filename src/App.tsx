@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import './App.css'
 import styled from 'styled-components'
 
 const delay = 100
@@ -10,6 +9,11 @@ const Mark = styled.div`
   display: inline;
   color: red;
 `
+const NoMark = styled.div`
+  display: inline;
+  opacity: 0.2;
+  color: black;
+`
 
 const Back = styled.div`
   position: absolute;
@@ -18,6 +22,22 @@ const Back = styled.div`
   width: 100%;
   height: 100%;
   display: inline;
+`
+
+const Main = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+
+const Value = styled.div`
+  font-size: 40vmin;
+  font-weight: bold;
 `
 
 function App(): JSX.Element {
@@ -47,11 +67,11 @@ function App(): JSX.Element {
 
   return (
     <>
-      <div className="App">
-        <div>{value}</div>
-      </div>
+      <Main>
+        <Value>{value}</Value>
+      </Main>
       <Back>
-        {all}
+        <NoMark>{all}</NoMark>
         <Mark>{hoge}</Mark>
       </Back>
     </>
