@@ -24,7 +24,7 @@ const Back = styled.div`
   width: 100%;
   height: 100%;
   display: inline;
-  font-size: 0.05vmin;
+  font-size: 8px;
 `
 
 const Main = styled.div`
