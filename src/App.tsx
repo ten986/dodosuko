@@ -219,9 +219,7 @@ function App(): JSX.Element {
     <>
       <Tweet>
         <a
-          href={getUrl(
-            `${counter}ドドスコタイムを経て、${end === 2 ? 'ドドスコスコスコに成功した！' : '未だドドスコ中...。'}`
-          )}
+          href={getUrl(`${counter}ドドスコタイムを経て、${end === 2 ? 'ラブ注入に成功した！' : '未だドドスコ中...。'}`)}
           target="_blank"
           rel="noopener noreferrer"
         >
