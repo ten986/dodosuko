@@ -1,5 +1,5 @@
 User-agent: Twitterbot
-Disallow: *
+Disallow:
 
-Allow: /images
-Allow: /archives
+User-agent: *
+Disallow: /
